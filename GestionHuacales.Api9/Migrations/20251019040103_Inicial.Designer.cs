@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionHuacales.Api9.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20251014001309_Inicial")]
+    [Migration("20251019040103_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
