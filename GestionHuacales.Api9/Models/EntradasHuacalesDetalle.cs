@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestionHuacales.Api.Models;
-
 public class EntradasHuacalesDetalle
 {
     [Key]
