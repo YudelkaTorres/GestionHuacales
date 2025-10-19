@@ -20,9 +20,24 @@ public class EntradasHuacalesController (EntradasHuacalesService entradasHuacale
 
     // GET api/<EntradasHuacalesController>/5
     [HttpGet("{id}")]
-    public string Get(int id)
+    public async Task<ActionResult<EntradasHuacalesDetalleDto>> Get(int id)
     {
-        return "value";
+        var entrada = await entradasHuacalesService.Buscar(id);
+        if (entrada == null)
+            return NotFound();
+
+        var entradasHuacalesDto = new EntradasHuacalesDto
+        {
+            NombreCliente = entrada.NombreCliente,
+            Huacales = entrada.EntradasHuacalesDetalle.Select(d => new EntradasHuacalesDetalleDto
+            {
+                TipoId = d.TipoId,
+                Cantidad = d.Cantidad,
+                Precio = d.Precio
+            }).ToArray()
+        };
+
+        return Ok(entradasHuacalesDto);
     }
 
     // POST api/<EntradasHuacalesController>
@@ -45,13 +60,33 @@ public class EntradasHuacalesController (EntradasHuacalesService entradasHuacale
 
     // PUT api/<EntradasHuacalesController>/5
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    public async Task<ActionResult> Put(int id, [FromBody] EntradasHuacalesDto entradasHuacalesDto)
     {
+        var huacales = new EntradasHuacales
+        {
+            EntradaId = id,
+            Fecha = DateTime.Now,
+            NombreCliente = entradasHuacalesDto.NombreCliente,
+            EntradasHuacalesDetalle = entradasHuacalesDto.Huacales.Select(h => new EntradasHuacalesDetalle
+            {
+                TipoId = h.TipoId,
+                Cantidad = h.Cantidad,
+                Precio = h.Precio,
+            }).ToArray()
+        };
+
+        await entradasHuacalesService.Guardar(huacales);
+        return Ok();
     }
 
     // DELETE api/<EntradasHuacalesController>/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
+        var eliminado = await entradasHuacalesService.Eliminar(id);
+        if (!eliminado)
+            return NotFound();
+
+        return NoContent();
     }
 }
