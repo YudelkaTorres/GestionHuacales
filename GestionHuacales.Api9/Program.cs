@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var ConnectionString = builder.Configuration.GetConnectionString("SqlConstr");
+var ConnectionString = builder.Configuration.GetConnectionString("sqlite");
 builder.Services.AddDbContextFactory<Contexto>(options => options.UseSqlite(ConnectionString));
 builder.Services.AddScoped<EntradasHuacalesService>();
 
