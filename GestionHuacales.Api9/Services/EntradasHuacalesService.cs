@@ -3,10 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using GestionHuacales.Api.DAL;
 using GestionHuacales.Api.Models;
 using GestionHuacales.Api.DTO;
+using GestionHuacales.Api9.DTO;
 
 namespace GestionHuacales.Api.Services;
-public class EntradasHuacalesService(IDbContextFactory<Contexto> DbFactory)
+public class EntradasHuacalesService
 {
+    public IDbContextFactory<Contexto> DbFactory { get; }
+
+    public EntradasHuacalesService(IDbContextFactory<Contexto> dbFactory)
+    {
+        DbFactory = dbFactory;
+    }
     public async Task<EntradasHuacalesDto[]> Listar(Expression<Func<EntradasHuacales, bool>> criterio)
     {
        await using var contexto = await DbFactory.CreateDbContextAsync();
@@ -109,12 +116,17 @@ public class EntradasHuacalesService(IDbContextFactory<Contexto> DbFactory)
         await contexto.SaveChangesAsync();
         return true;
     }
-    public async Task<List<EntradasHuacalesTipos>> ListarTipos()
+    public async Task<EntradasHuacalesTiposDto[]> ListarTipos()
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacalesTipos
-            .AsNoTracking()
-            .ToListAsync();
+            .Where(t => t.TipoId > 0)
+            .Select(t => new EntradasHuacalesTiposDto
+            {
+                TipoId = t.TipoId,
+                Descripción = t.Descripción,
+                Existencia = t.Existencia
+            }).ToArrayAsync();
     }
 }
 public enum TipoOperacion
