@@ -19,9 +19,17 @@ public class EntradasHuacalesService
        await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
             .Where(criterio)
+            .Include(e => e.EntradasHuacalesDetalle)
             .Select(h => new EntradasHuacalesDto
             {
-                NombreCliente = h.NombreCliente
+                NombreCliente = h.NombreCliente,
+                Huacales = h.EntradasHuacalesDetalle
+                .Select(d  => new EntradasHuacalesDetalleDto
+                {
+                    TipoId = d.TipoId,
+                    Cantidad = d.Cantidad,
+                    Precio = d.Precio
+                }).ToArray()
             })
             .ToArrayAsync();
     }
@@ -73,6 +81,7 @@ public class EntradasHuacalesService
     private async Task<bool> Insertar(EntradasHuacales entrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
+
         contexto.EntradasHuacales.Add(entrada);
         await contexto.SaveChangesAsync();
 
