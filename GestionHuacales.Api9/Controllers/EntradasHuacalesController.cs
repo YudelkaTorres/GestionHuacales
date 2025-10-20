@@ -52,7 +52,7 @@ public class EntradasHuacalesController (EntradasHuacalesService entradasHuacale
             { 
                 TipoId = h.TipoId,
                 Cantidad = h.Cantidad,
-                Precio = h.Precio, 
+                Precio = h.Precio 
                 }).ToArray()
         };
        await entradasHuacalesService.Guardar(huacales);
